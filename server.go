@@ -1,7 +1,9 @@
 package main
 
 import (
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -35,7 +37,32 @@ func show(c echo.Context) error {
 
 // e.POST("/save", save)
 func save(c echo.Context) error {
+	// Get name
 	name := c.FormValue("name")
-	email := c.FormValue("email")
-	return c.String(http.StatusOK, "name:"+ name + "\temail:" + email)
+	// Get avatar
+	avatar, err := c.FormFile("avatar")
+	if err != nil {
+		return err
+	}
+
+	// Source
+	src, err := avatar.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Destination
+	dst, err := os.Create(avatar.Filename)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return c.HTML(http.StatusOK,"<b>Tnak you! " + name + "</b>")
 }
