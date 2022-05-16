@@ -16,10 +16,11 @@ type User struct {
 func main() {
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, workd!")
+		return c.String(http.StatusOK, "Hello, world!")
 	})
 	e.GET("/users/:id", getUser)
-	e.POST("/users", func(c echo.Context) error { u := new(User)
+	e.POST("/users", func(c echo.Context) error {
+		u := new(User)
 		if err := c.Bind(u); err != nil {
 			return err
 		}
@@ -45,7 +46,7 @@ func show(c echo.Context) error {
 	// Get team and member from the query string
 	team := c.QueryParam("team")
 	member := c.QueryParam("member")
-	return c.String(http.StatusOK, "team:" + team + "\tmember:" + member)
+	return c.String(http.StatusOK, "team:"+team+"\tmember:"+member)
 }
 
 // e.POST("/save", save)
@@ -77,5 +78,5 @@ func save(c echo.Context) error {
 		return err
 	}
 
-	return c.HTML(http.StatusOK,"<b>Tnak you! " + name + "</b>")
+	return c.HTML(http.StatusOK, "<b>Tnak you! "+name+"</b>")
 }
